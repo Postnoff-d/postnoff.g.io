@@ -1,0 +1,79 @@
+Для обучения очень рекомендую поставить VS Code c плагинами "Ansible", "Remote SSH" и на управляющем (тот, где запускаете команды ansible) сказать "pip3 install ansible-lint". Этот линтер позволяет избежать ошибок и объясняет, как правильно делать.
+
+Сегодня корректный плейбук выглядит так:
+
+---
+
+- name: Learn WHEN and BLOCK
+
+  hosts: all
+
+  become: true
+
+
+
+  tasks:
+
+  - name: Print OS family
+
+    ansible.builtin.debug:
+
+      var: ansible_os_family
+
+
+
+  - name: All for RedHat
+
+    when: ansible_os_family == "RedHat"
+
+    block:
+
+      - name: Install Apache on RedHat
+
+        ansible.builtin.dnf:
+
+          name: httpd
+
+          state: present
+
+
+      - name: Start WebServer and make boot RedHat
+
+        ansible.builtin.service:
+
+          name: httpd
+
+          state: started
+
+          enabled: true
+
+
+  - name: All for Debian
+
+    when: ansible_os_family == "Debian"
+
+    block:
+
+      - name: Install Apache on Debian
+
+        ansible.builtin.apt:
+
+          name: apache2
+
+          state: present
+
+
+
+      - name: Start WebServer and make boot Debian
+
+        ansible.builtin.service:
+
+          name: apache2
+
+          state: started
+
+          enabled: true
+
+
+
+тут без перезапуска, просто установка и настройка.
